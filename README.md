@@ -6,7 +6,7 @@ Welcome to my PowerShell script for common troubleshooting steps with Star Citiz
 
 Download the sc-troubleshooting.ps1 script from GitHub and copy it to any appropriate folder (for example, *C:\Program Files\Roberts Space Industries\StarCitizen*). Simply run the script in PowerShell, and it'll initially ask you for the path where you installed Star Citizen, and then present you with the following menu:
 
-![screenshot](https://github.com/DeusMaximus/sc-troubleshooting/assets/10080364/2c3a12cf-caad-4df8-a245-3fef2bee4d30)
+![screenshot](https://github.com/DeusMaximus/sc-troubleshooting/assets/10080364/fe4313f0-daec-4446-ad60-a849d0afeafd)
 
 To create a shortcut to this file, simply right click on the desktop and select "New > Shortcut" and paste the following single line into the Location prompt (Assuming you saved the script to *C:\Program Files\Roberts Space Industries\StarCitizen*):
 
@@ -30,13 +30,13 @@ Whenever the game crashes, crash dumps are stored in the local AppData folder fo
 
 Deleting the EasyAntiCheat folder is an additional troubleshooting step when the game fails to load. You'll need to re-verify files again in order to redownload and reinstall EasyAntiCheat, before logging into Star Citizen.
 
-### USER folder deletion (both LIVE and PTU/EPTU options)
+### USER folder deletion (LIVE, PTU and EPTU options)
 
 The USER folder is where all your graphic settings, control settings and keybinds live. This also used to be the place where shaders were compiled, and deleting this folder used to be a common troubleshooting step. Nowadays, this isn't as necessary and is generally not recommended as this option nukes all of your control settings and custom keybinds. However, it can be a helpful step to start fresh - especially when it comes to the PTU/EPTU environments.
 
-### Public Test Universe / Experimental Public Test Universe preparation
+### Copying to and from the Live Universe, Public Test Universe and Experimental Public Test Universe
 
-The PTU and EPTU environments are testing environments for the next live release of Star Citizen. These options allow you to erase the contents of the PTU and EPTU folders, and copy the relevant contents of the LIVE folder across in preparation of a new patch - this gives you a head start and allows you to patch what's currently there, as opposed to redownloading 100GB or more of data all over again just for the PTU/EPTU. After copying the contents across, simply Verify the files in the RSI launcher as opposed to downloading or updating.
+The PTU and EPTU environments are testing environments for the next LIVE release of Star Citizen. These options allow you to erase the contents of the LIVE, PTU or EPTU folders, and copy the relevant contents of another environment's folder across in preparation of a new patch - this gives you a head start and allows you to patch what's currently there, as opposed to redownloading 100GB or more of data all over again. After copying the contents across, simply Verify the files in the RSI launcher as opposed to downloading or updating.
 
 ## Quick Glossary
 
