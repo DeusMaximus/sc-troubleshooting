@@ -21,7 +21,8 @@ function Show-Menu
     Write-Host "1: Press '1' for the LIVE environment."
     Write-Host "2: Press '2' for the PTU environment."
     Write-Host "3: Press '3' for the EPTU environment."
-    Write-Host "4: Press '4' for general troubleshooting."
+    Write-Host "4: Press '4' for the TECH-PREVIEW environment."
+    Write-Host "5: Press '5' for general troubleshooting."
     Write-Host "Q: Press 'Q' to quit."
 }
 
@@ -37,6 +38,7 @@ function Show-LIVE-Menu
     Write-Host "2: Press '2' to delete the LIVE USER folder (not recommended)."
     Write-Host "3: Press '3' to copy LIVE to the PTU environment."
     Write-Host "4: Press '4' to copy LIVE to the EPTU environment."
+    Write-Host "5: Press '5' to copy LIVE to the TECH-PREVIEW environment."
     Write-Host "B: Press 'B' to go back."
 }
 
@@ -156,6 +158,17 @@ function deleteEAC_EPTU
     }
     Write-Host "Remember to verify your game files before launching Star Citizen after doing this!"
 }
+function deleteEAC_TECHPREVIEW
+{
+    $strEACPaths = Get-ChildItem "$strFolder\TECH-PREVIEW" -Recurse | Where-Object { $_.PSIsContainer -and $_.Name.EndsWith('EasyAntiCheat')}
+    
+    foreach ($strEACPath in $strEACPaths) {
+        Write-Host "Deleting EasyAntiCheat in" $strEACPath.FullName
+        Remove-Item $strEACPath.FullName -Recurse
+    }
+    Write-Host "Remember to verify your game files before launching Star Citizen after doing this!"
+}
+
 function deleteUserLIVE
 {
     $strUserPaths = Get-ChildItem "$strFolder\LIVE" -Recurse | Where-Object { $_.PSIsContainer -and $_.Name.EndsWith('USER')}
@@ -198,6 +211,19 @@ function deleteUserEPTU
     }
 }
 
+function deleteUserTECHPREVIEW
+{
+    $strUserTECHPREVIEWPaths = Get-ChildItem "$strFolder\TECH-PREVIEW" -Recurse | Where-Object { $_.PSIsContainer -and $_.Name.EndsWith('USER')}
+    
+    Write-Host 'This will delete all folders with USER in the name in your TECH-PREVIEW folder, including controller bindings.'
+    $deleteUsersTECHPREVIEW = $Host.UI.PromptForChoice('', 'Are you sure?', @('&Yes'; '&No'), 0)
+    if ($deleteUsersTECHPREVIEW -eq 0){
+        foreach ($strUserTECHPREVIEWPath in $strUserTECHPREVIEWPaths) {
+            Write-Host "Deleting USER folder in" $strUserTECHPREVIEWPath.FullName
+            Remove-Item $strUserTECHPREVIEWPath.FullName -Recurse
+        }
+    }
+}
 
 function copyLIVEtoPTU
 {
@@ -216,6 +242,16 @@ function copyLIVEtoEPTU
     if ($deleteEPTU -eq 0){
         Get-ChildItem -Path  "$strFolder\EPTU" -Exclude ('USER', 'ScreenShots') | Get-ChildItem -Recurse | Select-Object -ExpandProperty FullName | Remove-Item -Recurse -Force 
         robocopy "$strFolder\LIVE" "$strFolder\EPTU" /MIR /XD "$strFolder\LIVE\DebugLogs" "$strFolder\LIVE\EasyAntiCheat" "$strFolder\LIVE\logbackups" "$strFolder\LIVE\logs" "$strFolder\LIVE\ScreenShots" "$strFolder\LIVE\USER" /XF *.log
+    }
+}
+
+function copyLIVEtoTECHPREVIEW
+{
+    Write-Host 'This will delete all files in the TECH-PREVIEW folder, except for the USER and ScreenShots folder, and copy the current LIVE build as a starting point for the next TECH-PREVIEW patch.'
+    $deletePTU = $Host.UI.PromptForChoice('', 'Are you sure?', @('&Yes'; '&No'), 0)
+    if ($deletePTU -eq 0){
+        Get-ChildItem -Path  "$strFolder\TECH-PREVIEW" -Exclude ('USER', 'ScreenShots') | Get-ChildItem -Recurse | Select-Object -ExpandProperty FullName | Remove-Item -Recurse -Force 
+        robocopy "$strFolder\LIVE" "$strFolder\TECH-PREVIEW" /MIR /XD "$strFolder\LIVE\DebugLogs" "$strFolder\LIVE\EasyAntiCheat" "$strFolder\LIVE\logbackups" "$strFolder\LIVE\logs" "$strFolder\LIVE\ScreenShots" "$strFolder\LIVE\USER" /XF *.log
     }
 }
 
@@ -259,6 +295,16 @@ function copyEPTUtoPTU
     }
 }
 
+function copyTECHPREVIEWtoLIVE
+{
+    Write-Host 'This will delete all files in the LIVE folder, except for the USER and ScreenShots folder, and copy the current TECH-PREVIEW build as a starting point for the next LIVE patch.'
+    $deletePTU = $Host.UI.PromptForChoice('', 'Are you sure?', @('&Yes'; '&No'), 0)
+    if ($deletePTU -eq 0){
+        Get-ChildItem -Path  "$strFolder\LIVE" -Exclude ('USER', 'ScreenShots') | Get-ChildItem -Recurse | Select-Object -ExpandProperty FullName | Remove-Item -Recurse -Force 
+        robocopy "$strFolder\TECH-PREVIEW" "$strFolder\LIVE" /MIR /XD "$strFolder\TECH-PREVIEW\DebugLogs" "$strFolder\TECH-PREVIEW\EasyAntiCheat" "$strFolder\TECH-PREVIEW\logbackups" "$strFolder\TECH-PREVIEW\logs" "$strFolder\TECH-PREVIEW\ScreenShots" "$strFolder\TECH-PREVIEW\USER" /XF *.log
+    }
+}
+
 
 do
 {
@@ -290,6 +336,11 @@ do
                     }
                     '4' {
                         copyLIVEtoEPTU
+                        Write-Host
+                        pause    
+                    }
+                    '5' {
+                        copyLIVEtoTECHPREVIEW
                         Write-Host
                         pause    
                     }
@@ -359,9 +410,34 @@ do
         } '4' {
             do
             {
-                Show-General-Menu
+                Show-TECH-PREVIEW-Menu
                 $selection4 = Read-Host "Please make a selection"
                 switch ($selection4)
+                {
+                    '1' {
+                        deleteEAC_TECHPREVIEW
+                        Write-Host
+                        pause    
+                    }
+                    '2' {
+                        deleteUserTECHPREVIEW
+                        Write-Host
+                        pause    
+                    }
+                    '3' {
+                        copyTECHPREVIEWtoLIVE
+                        Write-Host
+                        pause    
+                    }
+                }
+            }
+            until ($selection4 -eq 'b')
+        } '5' {
+            do
+            {
+                Show-General-Menu
+                $selection5 = Read-Host "Please make a selection"
+                switch ($selection5)
                 {
                     '1' {
                         deleteShaders
@@ -380,7 +456,7 @@ do
                     }
                 }
             }
-            until ($selection4 -eq 'b')
+            until ($selection5 -eq 'b')
         }
     }
 }
