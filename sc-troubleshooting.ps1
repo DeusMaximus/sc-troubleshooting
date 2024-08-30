@@ -126,9 +126,14 @@ function deleteCrashes
     }
 }
 
-function deleteEAC_LIVE
+function deleteEAC
 {
-    $strEACPaths = Get-ChildItem "$strFolder\LIVE" -Recurse | Where-Object { $_.PSIsContainer -and $_.Name.EndsWith('EasyAntiCheat')}
+    Param
+    (
+        [Parameter(Mandatory=$true, Position=0)]
+        [string] $Environment
+    )
+    $strEACPaths = Get-ChildItem "$strFolder\$Environment" -Recurse | Where-Object { $_.PSIsContainer -and $_.Name.EndsWith('EasyAntiCheat')}
     
     foreach ($strEACPath in $strEACPaths) {
         Write-Host "Deleting EasyAntiCheat in" $strEACPath.FullName
@@ -137,42 +142,15 @@ function deleteEAC_LIVE
     Write-Host "Remember to verify your game files before launching Star Citizen after doing this!"
 }
 
-function deleteEAC_PTU
+function deleteUser
 {
-    $strEACPaths = Get-ChildItem "$strFolder\PTU" -Recurse | Where-Object { $_.PSIsContainer -and $_.Name.EndsWith('EasyAntiCheat')}
-    
-    foreach ($strEACPath in $strEACPaths) {
-        Write-Host "Deleting EasyAntiCheat in" $strEACPath.FullName
-        Remove-Item $strEACPath.FullName -Recurse
-    }
-    Write-Host "Remember to verify your game files before launching Star Citizen after doing this!"
-}
-
-function deleteEAC_EPTU
-{
-    $strEACPaths = Get-ChildItem "$strFolder\EPTU" -Recurse | Where-Object { $_.PSIsContainer -and $_.Name.EndsWith('EasyAntiCheat')}
-    
-    foreach ($strEACPath in $strEACPaths) {
-        Write-Host "Deleting EasyAntiCheat in" $strEACPath.FullName
-        Remove-Item $strEACPath.FullName -Recurse
-    }
-    Write-Host "Remember to verify your game files before launching Star Citizen after doing this!"
-}
-function deleteEAC_TECHPREVIEW
-{
-    $strEACPaths = Get-ChildItem "$strFolder\TECH-PREVIEW" -Recurse | Where-Object { $_.PSIsContainer -and $_.Name.EndsWith('EasyAntiCheat')}
-    
-    foreach ($strEACPath in $strEACPaths) {
-        Write-Host "Deleting EasyAntiCheat in" $strEACPath.FullName
-        Remove-Item $strEACPath.FullName -Recurse
-    }
-    Write-Host "Remember to verify your game files before launching Star Citizen after doing this!"
-}
-
-function deleteUserLIVE
-{
-    $strUserPaths = Get-ChildItem "$strFolder\LIVE" -Recurse | Where-Object { $_.PSIsContainer -and $_.Name.EndsWith('USER')}
-    Write-Host 'This will delete all folders with USER in the name in your LIVE folder, including controller bindings.'
+    Param
+    (
+        [Parameter(Mandatory=$true, Position=0)]
+        [string] $Environment
+    )
+    $strUserPaths = Get-ChildItem "$strFolder\$Environment" -Recurse | Where-Object { $_.PSIsContainer -and $_.Name.EndsWith('USER')}
+    Write-Host "This will delete all folders with USER in the name in your $Environment folder, including controller bindings."
     $deleteUsers = $Host.UI.PromptForChoice('', 'Are you sure?', @('&Yes'; '&No'), 1)
     if ($deleteUsers -eq 0)
     {
@@ -183,128 +161,22 @@ function deleteUserLIVE
     }
 }
 
-function deleteUserPTU
+function copyEnvironment
 {
-    $strUserPTUPaths = Get-ChildItem "$strFolder\PTU" -Recurse | Where-Object { $_.PSIsContainer -and $_.Name.EndsWith('USER')}
-    
-    Write-Host 'This will delete all folders with USER in the name in your PTU folder, including controller bindings.'
-    $deleteUsersPTU = $Host.UI.PromptForChoice('', 'Are you sure?', @('&Yes'; '&No'), 0)
-    if ($deleteUsersPTU -eq 0){
-        foreach ($strUserPTUPath in $strUserPTUPaths) {
-            Write-Host "Deleting USER folder in" $strUserPTUPath.FullName
-            Remove-Item $strUserPTUPath.FullName -Recurse
-        }
-    }
-}
-
-function deleteUserEPTU
-{
-    $strUserEPTUPaths = Get-ChildItem "$strFolder\EPTU" -Recurse | Where-Object { $_.PSIsContainer -and $_.Name.EndsWith('USER')}
-    
-    Write-Host 'This will delete all folders with USER in the name in your EPTU folder, including controller bindings.'
-    $deleteUsersEPTU = $Host.UI.PromptForChoice('', 'Are you sure?', @('&Yes'; '&No'), 0)
-    if ($deleteUsersEPTU -eq 0){
-        foreach ($strUserEPTUPath in $strUserEPTUPaths) {
-            Write-Host "Deleting USER folder in" $strUserEPTUPath.FullName
-            Remove-Item $strUserEPTUPath.FullName -Recurse
-        }
-    }
-}
-
-function deleteUserTECHPREVIEW
-{
-    $strUserTECHPREVIEWPaths = Get-ChildItem "$strFolder\TECH-PREVIEW" -Recurse | Where-Object { $_.PSIsContainer -and $_.Name.EndsWith('USER')}
-    
-    Write-Host 'This will delete all folders with USER in the name in your TECH-PREVIEW folder, including controller bindings.'
-    $deleteUsersTECHPREVIEW = $Host.UI.PromptForChoice('', 'Are you sure?', @('&Yes'; '&No'), 0)
-    if ($deleteUsersTECHPREVIEW -eq 0){
-        foreach ($strUserTECHPREVIEWPath in $strUserTECHPREVIEWPaths) {
-            Write-Host "Deleting USER folder in" $strUserTECHPREVIEWPath.FullName
-            Remove-Item $strUserTECHPREVIEWPath.FullName -Recurse
-        }
-    }
-}
-
-function copyLIVEtoPTU
-{
-    Write-Host 'This will delete all files in the PTU folder, except for the USER and ScreenShots folder, and copy the current LIVE build as a starting point for the next PTU patch.'
+    Param
+    (
+        [Parameter(Mandatory=$true, Position=0)]
+        [string] $Source,
+        [Parameter(Mandatory=$true, Position=1)]
+        [int] $Destination
+    )
+    Write-Host "This will delete all files in the $Destination folder, except for the USER and ScreenShots folder, and copy the current $Source build as a starting point for the next $Destination patch."
     $deletePTU = $Host.UI.PromptForChoice('', 'Are you sure?', @('&Yes'; '&No'), 0)
     if ($deletePTU -eq 0){
-        Get-ChildItem -Path  "$strFolder\PTU" -Exclude ('USER', 'ScreenShots') | Get-ChildItem -Recurse | Select-Object -ExpandProperty FullName | Remove-Item -Recurse -Force 
-        robocopy "$strFolder\LIVE" "$strFolder\PTU" /MIR /XD "$strFolder\LIVE\DebugLogs" "$strFolder\LIVE\EasyAntiCheat" "$strFolder\LIVE\logbackups" "$strFolder\LIVE\logs" "$strFolder\LIVE\ScreenShots" "$strFolder\LIVE\USER" /XF *.log
+        Get-ChildItem -Path  "$strFolder\$Destination" -Exclude ('USER', 'ScreenShots') | Get-ChildItem -Recurse | Select-Object -ExpandProperty FullName | Remove-Item -Recurse -Force 
+        robocopy "$strFolder\$Source" "$strFolder\$Destination" /MIR /XD "$strFolder\$Source\DebugLogs" "$strFolder\$Source\EasyAntiCheat" "$strFolder\$Source\logbackups" "$strFolder\$Source\logs" "$strFolder\$Source\ScreenShots" "$strFolder\$Source\USER" /XF *.log
     }
 }
-
-function copyLIVEtoEPTU
-{
-    Write-Host 'This will delete all files in the EPTU folder, except for the USER and ScreenShots folder, and copy the current LIVE build as a starting point for the next EPTU patch.'
-    $deleteEPTU = $Host.UI.PromptForChoice('', 'Are you sure?', @('&Yes'; '&No'), 0)
-    if ($deleteEPTU -eq 0){
-        Get-ChildItem -Path  "$strFolder\EPTU" -Exclude ('USER', 'ScreenShots') | Get-ChildItem -Recurse | Select-Object -ExpandProperty FullName | Remove-Item -Recurse -Force 
-        robocopy "$strFolder\LIVE" "$strFolder\EPTU" /MIR /XD "$strFolder\LIVE\DebugLogs" "$strFolder\LIVE\EasyAntiCheat" "$strFolder\LIVE\logbackups" "$strFolder\LIVE\logs" "$strFolder\LIVE\ScreenShots" "$strFolder\LIVE\USER" /XF *.log
-    }
-}
-
-function copyLIVEtoTECHPREVIEW
-{
-    Write-Host 'This will delete all files in the TECH-PREVIEW folder, except for the USER and ScreenShots folder, and copy the current LIVE build as a starting point for the next TECH-PREVIEW patch.'
-    $deletePTU = $Host.UI.PromptForChoice('', 'Are you sure?', @('&Yes'; '&No'), 0)
-    if ($deletePTU -eq 0){
-        Get-ChildItem -Path  "$strFolder\TECH-PREVIEW" -Exclude ('USER', 'ScreenShots') | Get-ChildItem -Recurse | Select-Object -ExpandProperty FullName | Remove-Item -Recurse -Force 
-        robocopy "$strFolder\LIVE" "$strFolder\TECH-PREVIEW" /MIR /XD "$strFolder\LIVE\DebugLogs" "$strFolder\LIVE\EasyAntiCheat" "$strFolder\LIVE\logbackups" "$strFolder\LIVE\logs" "$strFolder\LIVE\ScreenShots" "$strFolder\LIVE\USER" /XF *.log
-    }
-}
-
-function copyPTUtoLIVE
-{
-    Write-Host 'This will delete all files in the LIVE folder, except for the USER and ScreenShots folder, and copy the current PTU build as a starting point for the next LIVE patch.'
-    $deletePTU = $Host.UI.PromptForChoice('', 'Are you sure?', @('&Yes'; '&No'), 0)
-    if ($deletePTU -eq 0){
-        Get-ChildItem -Path  "$strFolder\LIVE" -Exclude ('USER', 'ScreenShots') | Get-ChildItem -Recurse | Select-Object -ExpandProperty FullName | Remove-Item -Recurse -Force 
-        robocopy "$strFolder\PTU" "$strFolder\LIVE" /MIR /XD "$strFolder\PTU\DebugLogs" "$strFolder\PTU\EasyAntiCheat" "$strFolder\PTU\logbackups" "$strFolder\PTU\logs" "$strFolder\PTU\ScreenShots" "$strFolder\PTU\USER" /XF *.log
-    }
-}
-
-function copyPTUtoEPTU
-{
-    Write-Host 'This will delete all files in the EPTU folder, except for the USER and ScreenShots folder, and copy the current PTU build as a starting point for the next EPTU patch.'
-    $deletePTU = $Host.UI.PromptForChoice('', 'Are you sure?', @('&Yes'; '&No'), 0)
-    if ($deletePTU -eq 0){
-        Get-ChildItem -Path  "$strFolder\EPTU" -Exclude ('USER', 'ScreenShots') | Get-ChildItem -Recurse | Select-Object -ExpandProperty FullName | Remove-Item -Recurse -Force 
-        robocopy "$strFolder\PTU" "$strFolder\EPTU" /MIR /XD "$strFolder\PTU\DebugLogs" "$strFolder\PTU\EasyAntiCheat" "$strFolder\PTU\logbackups" "$strFolder\PTU\logs" "$strFolder\PTU\ScreenShots" "$strFolder\PTU\USER" /XF *.log
-    }
-}
-
-function copyEPTUtoLIVE
-{
-    Write-Host 'This will delete all files in the LIVE folder, except for the USER and ScreenShots folder, and copy the current EPTU build as a starting point for the next LIVE patch.'
-    $deletePTU = $Host.UI.PromptForChoice('', 'Are you sure?', @('&Yes'; '&No'), 0)
-    if ($deletePTU -eq 0){
-        Get-ChildItem -Path  "$strFolder\LIVE" -Exclude ('USER', 'ScreenShots') | Get-ChildItem -Recurse | Select-Object -ExpandProperty FullName | Remove-Item -Recurse -Force 
-        robocopy "$strFolder\EPTU" "$strFolder\LIVE" /MIR /XD "$strFolder\EPTU\DebugLogs" "$strFolder\EPTU\EasyAntiCheat" "$strFolder\EPTU\logbackups" "$strFolder\EPTU\logs" "$strFolder\EPTU\ScreenShots" "$strFolder\EPTU\USER" /XF *.log
-    }
-}
-
-function copyEPTUtoPTU
-{
-    Write-Host 'This will delete all files in the PTU folder, except for the USER and ScreenShots folder, and copy the current EPTU build as a starting point for the next PTU patch.'
-    $deletePTU = $Host.UI.PromptForChoice('', 'Are you sure?', @('&Yes'; '&No'), 0)
-    if ($deletePTU -eq 0){
-        Get-ChildItem -Path  "$strFolder\PTU" -Exclude ('USER', 'ScreenShots') | Get-ChildItem -Recurse | Select-Object -ExpandProperty FullName | Remove-Item -Recurse -Force 
-        robocopy "$strFolder\EPTU" "$strFolder\PTU" /MIR /XD "$strFolder\EPTU\DebugLogs" "$strFolder\EPTU\EasyAntiCheat" "$strFolder\EPTU\logbackups" "$strFolder\EPTU\logs" "$strFolder\EPTU\ScreenShots" "$strFolder\EPTU\USER" /XF *.log
-    }
-}
-
-function copyTECHPREVIEWtoLIVE
-{
-    Write-Host 'This will delete all files in the LIVE folder, except for the USER and ScreenShots folder, and copy the current TECH-PREVIEW build as a starting point for the next LIVE patch.'
-    $deletePTU = $Host.UI.PromptForChoice('', 'Are you sure?', @('&Yes'; '&No'), 0)
-    if ($deletePTU -eq 0){
-        Get-ChildItem -Path  "$strFolder\LIVE" -Exclude ('USER', 'ScreenShots') | Get-ChildItem -Recurse | Select-Object -ExpandProperty FullName | Remove-Item -Recurse -Force 
-        robocopy "$strFolder\TECH-PREVIEW" "$strFolder\LIVE" /MIR /XD "$strFolder\TECH-PREVIEW\DebugLogs" "$strFolder\TECH-PREVIEW\EasyAntiCheat" "$strFolder\TECH-PREVIEW\logbackups" "$strFolder\TECH-PREVIEW\logs" "$strFolder\TECH-PREVIEW\ScreenShots" "$strFolder\TECH-PREVIEW\USER" /XF *.log
-    }
-}
-
 
 do
 {
@@ -320,27 +192,27 @@ do
                 switch ($selection1)
                 {
                     '1' {
-                        deleteEAC_LIVE
+                        deleteEAC -Environment "LIVE"
                         Write-Host
                         pause    
                     }
                     '2' {
-                        deleteUserLIVE
+                        deleteUser -Environment "LIVE"
                         Write-Host
                         pause    
                     }
                     '3' {
-                        copyLIVEtoPTU
+                        copyEnvironment -Source "LIVE" -Destination "PTU"
                         Write-Host
                         pause    
                     }
                     '4' {
-                        copyLIVEtoEPTU
+                        copyEnvironment -Source "LIVE" -Destination "EPTU"
                         Write-Host
                         pause    
                     }
                     '5' {
-                        copyLIVEtoTECHPREVIEW
+                        copyEnvironment -Source "LIVE" -Destination "TECH-PREVIEW"
                         Write-Host
                         pause    
                     }
@@ -355,22 +227,22 @@ do
                 switch ($selection2)
                 {
                     '1' {
-                        deleteEAC_PTU
+                        deleteEAC -Environment "PTU"
                         Write-Host
                         pause    
                     }
                     '2' {
-                        deleteUserPTU
+                        deleteUser -Environment "PTU"
                         Write-Host
                         pause    
                     }
                     '3' {
-                        copyPTUtoLIVE
+                        copyEnvironment -Source "PTU" -Destination "LIVE"
                         Write-Host
                         pause    
                     }
                     '4' {
-                        copyPTUtoEPTU
+                        copyEnvironment -Source "PTU" -Destination "EPTU"
                         Write-Host
                         pause    
                     }
@@ -385,22 +257,22 @@ do
                 switch ($selection3)
                 {
                     '1' {
-                        deleteEAC_EPTU
+                        deleteEAC -Environment "EPTU"
                         Write-Host
                         pause    
                     }
                     '2' {
-                        deleteUserEPTU
+                        deleteUser -Environment "EPTU"
                         Write-Host
                         pause    
                     }
                     '3' {
-                        copyEPTUtoLIVE
+                        copyEnvironment -Source "EPTU" -Destination "LIVE"
                         Write-Host
                         pause    
                     }
                     '4' {
-                        copyEPTUtoPTU
+                        copyEnvironment -Source "EPTU" -Destination "PTU"
                         Write-Host
                         pause    
                     }
@@ -415,17 +287,17 @@ do
                 switch ($selection4)
                 {
                     '1' {
-                        deleteEAC_TECHPREVIEW
+                        deleteEAC -Environment "TECH-PREVIEW"
                         Write-Host
                         pause    
                     }
                     '2' {
-                        deleteUserTECHPREVIEW
+                        deleteUser -Environment "TECH-PREVIEW"
                         Write-Host
                         pause    
                     }
                     '3' {
-                        copyTECHPREVIEWtoLIVE
+                        copyEnvironment -Source "TECH-PREVIEW" -Destination "LIVE"
                         Write-Host
                         pause    
                     }
