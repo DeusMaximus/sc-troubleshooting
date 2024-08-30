@@ -2,6 +2,9 @@
 $strDefault = "C:\Program Files\Roberts Space Industries\StarCitizen"
 
 # Don't change any other values
+# $roamingAppData = [Environment]::GetFolderPath('ApplicationData')
+$localAppData = [Environment]::GetFolderPath('LocalApplicationData')
+
 Clear-Host
 Write-Host "Welcome to Deus Maximus's Star Citizen Troubleshooting script (for Alpha 3.17 or higher)."
 Write-Host
@@ -88,7 +91,7 @@ function Show-General-Menu
 
 function deleteShaders
 {
-    $strShaderPaths = Get-ChildItem "$env:LOCALAPPDATA\Star Citizen" -Recurse | Where-Object { $_.PSIsContainer -and $_.Name.EndsWith('shaders')}
+    $strShaderPaths = Get-ChildItem "$localAppData\Star Citizen" -Recurse | Where-Object { $_.PSIsContainer -and $_.Name.EndsWith('shaders')}
     $strOldShaderPaths = Get-ChildItem "$strFolder" -Recurse | Where-Object { $_.PSIsContainer -and $_.Name.EndsWith('shaders')}
     
     foreach ($strShaderPath in $strShaderPaths) {
@@ -118,7 +121,7 @@ function deleteOldLogs
 
 function deleteCrashes
 {
-    $strCrashPath = "$env:LOCALAPPDATA\Star Citizen\Crashes"
+    $strCrashPath = "$localAppData\Star Citizen\Crashes"
     
     If (Test-Path "$strCrashPath"){
         Write-Host "Deleting crash dumps in" $strCrashPath
