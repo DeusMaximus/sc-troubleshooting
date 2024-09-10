@@ -171,11 +171,15 @@ function copyEnvironment
         [Parameter(Mandatory=$true, Position=0)]
         [string] $Source,
         [Parameter(Mandatory=$true, Position=1)]
-        [int] $Destination
+        [string] $Destination
     )
     Write-Host "This will delete all files in the $Destination folder, except for the USER and ScreenShots folder, and copy the current $Source build as a starting point for the next $Destination patch."
     $deletePTU = $Host.UI.PromptForChoice('', 'Are you sure?', @('&Yes'; '&No'), 0)
     if ($deletePTU -eq 0){
+        if(!(Test-Path -Path "$strFolder\$Destination"))
+        {
+            New-Item -Path "$strFolder" -Name "$Destination" -ItemType Directory
+        }    
         Get-ChildItem -Path  "$strFolder\$Destination" -Exclude ('USER', 'ScreenShots') | Get-ChildItem -Recurse | Select-Object -ExpandProperty FullName | Remove-Item -Recurse -Force 
         robocopy "$strFolder\$Source" "$strFolder\$Destination" /MIR /XD "$strFolder\$Source\DebugLogs" "$strFolder\$Source\EasyAntiCheat" "$strFolder\$Source\logbackups" "$strFolder\$Source\logs" "$strFolder\$Source\ScreenShots" "$strFolder\$Source\USER" /XF *.log
     }
