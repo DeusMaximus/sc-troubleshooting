@@ -78,14 +78,14 @@ function Show-EPTU-Menu
 function Show-TECHPREVIEW-Menu
 {
     param (
-        [string]$Title = 'Star Citizen TECHPREVIEW Troubleshooting'
+        [string]$Title = 'Star Citizen TECH-PREVIEW Troubleshooting'
     )
     Clear-Host
     Write-Host "================ $Title ================"
     
     Write-Host "1: Press '1' to delete Easy Anti Cheat (you will need to re-verify files after doing this)."
-    Write-Host "2: Press '2' to delete the TECHPREVIEW USER folder."
-    Write-Host "3: Press '3' to copy TECHPREVIEW to the LIVE environment."
+    Write-Host "2: Press '2' to delete the TECH-PREVIEW USER folder."
+    Write-Host "3: Press '3' to copy TECH-PREVIEW to the LIVE environment."
     Write-Host "B: Press 'B' to go back."
 }
 
