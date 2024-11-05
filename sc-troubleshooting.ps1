@@ -75,7 +75,7 @@ function Show-EPTU-Menu
     Write-Host "B: Press 'B' to go back."
 }
 
-function Show-TECHPREVIEW-Menu
+function Show-TECH-PREVIEW-Menu
 {
     param (
         [string]$Title = 'Star Citizen TECH-PREVIEW Troubleshooting'
