@@ -25,7 +25,8 @@ function Show-Menu
     Write-Host "2: Press '2' for the PTU environment."
     Write-Host "3: Press '3' for the EPTU environment."
     Write-Host "4: Press '4' for the TECH-PREVIEW environment."
-    Write-Host "5: Press '5' for general troubleshooting."
+    Write-Host "4: Press '5' for the HOTFIX environment."
+    Write-Host "5: Press '6' for general troubleshooting."
     Write-Host "Q: Press 'Q' to quit."
 }
 
@@ -42,6 +43,7 @@ function Show-LIVE-Menu
     Write-Host "3: Press '3' to copy LIVE to the PTU environment."
     Write-Host "4: Press '4' to copy LIVE to the EPTU environment."
     Write-Host "5: Press '5' to copy LIVE to the TECH-PREVIEW environment."
+    Write-Host "6: Press '6' to copy LIVE to the HOTFIX environment."
     Write-Host "B: Press 'B' to go back."
 }
 
@@ -88,6 +90,21 @@ function Show-TECH-PREVIEW-Menu
     Write-Host "3: Press '3' to copy TECH-PREVIEW to the LIVE environment."
     Write-Host "B: Press 'B' to go back."
 }
+
+function Show-HOTFIX-Menu
+{
+    param (
+        [string]$Title = 'Star Citizen HOTFIX Troubleshooting'
+    )
+    Clear-Host
+    Write-Host "================ $Title ================"
+    
+    Write-Host "1: Press '1' to delete Easy Anti Cheat (you will need to re-verify files after doing this)."
+    Write-Host "2: Press '2' to delete the HOTFIX USER folder."
+    Write-Host "3: Press '3' to copy HOTFIX to the LIVE environment."
+    Write-Host "B: Press 'B' to go back."
+}
+
 
 function Show-General-Menu
 {
@@ -237,6 +254,12 @@ do
                         Write-Host
                         pause    
                     }
+                    '6' {
+                        copyEnvironment -Source "LIVE" -Destination "HOTFIX"
+                        Write-Host
+                        pause    
+                    }
+
                 }
             }
             until ($selection1 -eq 'b')
@@ -326,6 +349,31 @@ do
             }
             until ($selection4 -eq 'b')
         } '5' {
+            do
+            {
+                Show-HOTFIX-Menu
+                $selection4 = Read-Host "Please make a selection"
+                switch ($selection4)
+                {
+                    '1' {
+                        deleteEAC -Environment "HOTFIX"
+                        Write-Host
+                        pause    
+                    }
+                    '2' {
+                        deleteUser -Environment "HOTFIX"
+                        Write-Host
+                        pause    
+                    }
+                    '3' {
+                        copyEnvironment -Source "HOTFIX" -Destination "LIVE"
+                        Write-Host
+                        pause    
+                    }
+                }
+            }
+            until ($selection4 -eq 'b')
+        } '6' {
             do
             {
                 Show-General-Menu
